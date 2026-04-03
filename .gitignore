@@ -1,0 +1,4 @@
+/backend/.npm-cache/
+/backend/.xdg.config/
+/frontend/.npm-cache/
+/frontend/*.log

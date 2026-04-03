@@ -16,11 +16,15 @@ export async function getRecipeOfTheDay() {
     const data = await response.json();
     return {
       success: true,
-      recipe: data.meals[0],
+      recipe: data?.meals?.[0] || null,
     };
   } catch (error) {
     console.error("Error fetching recipe of the day:", error);
-    throw new Error(error.message || "Failed to load recipe");
+    return {
+      success: false,
+      recipe: null,
+      error: error.message || "Failed to load recipe",
+    };
   }
 }
 
@@ -42,7 +46,11 @@ export async function getCategories() {
     };
   } catch (error) {
     console.error("Error fetching categories:", error);
-    throw new Error(error.message || "Failed to load categories");
+    return {
+      success: false,
+      categories: [],
+      error: error.message || "Failed to load categories",
+    };
   }
 }
 
@@ -64,7 +72,11 @@ export async function getAreas() {
     };
   } catch (error) {
     console.error("Error fetching areas:", error);
-    throw new Error(error.message || "Failed to load areas");
+    return {
+      success: false,
+      areas: [],
+      error: error.message || "Failed to load areas",
+    };
   }
 }
 
@@ -87,7 +99,12 @@ export async function getMealsByCategory(category) {
     };
   } catch (error) {
     console.error("Error fetching meals by category:", error);
-    throw new Error(error.message || "Failed to load meals");
+    return {
+      success: false,
+      meals: [],
+      category,
+      error: error.message || "Failed to load meals",
+    };
   }
 }
 
@@ -110,6 +127,11 @@ export async function getMealsByArea(area) {
     };
   } catch (error) {
     console.error("Error fetching meals by area:", error);
-    throw new Error(error.message || "Failed to load meals");
+    return {
+      success: false,
+      meals: [],
+      area,
+      error: error.message || "Failed to load meals",
+    };
   }
 }

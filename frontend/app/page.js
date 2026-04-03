@@ -12,8 +12,14 @@ import Link from "next/link";
 
 export default async function LandingPage() {
   const proPlan = process.env.NEXT_PUBLIC_CLERK_PRO_PLAN || "pro";
-  const { has } = await auth();
-  const subscriptionTier = has({ plan: proPlan }) ? "pro" : "free";
+  let subscriptionTier = "free";
+
+  try {
+    const { has } = await auth();
+    subscriptionTier = has?.({ plan: proPlan }) ? "pro" : "free";
+  } catch (error) {
+    console.error("Failed to resolve Clerk subscription tier:", error);
+  }
 
   return (
     <div className="min-h-screen bg-stone-50 text-stone-900">

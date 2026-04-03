@@ -12,10 +12,19 @@ import {
 import { getCategoryEmoji, getCountryFlag } from "@/lib/data";
 
 export default async function DashboardPage() {
-  // Fetch data server-side
-  const recipeData = await getRecipeOfTheDay();
-  const categoriesData = await getCategories();
-  const areasData = await getAreas();
+  let recipeData = { recipe: null };
+  let categoriesData = { categories: [] };
+  let areasData = { areas: [] };
+
+  try {
+    [recipeData, categoriesData, areasData] = await Promise.all([
+      getRecipeOfTheDay(),
+      getCategories(),
+      getAreas(),
+    ]);
+  } catch (error) {
+    console.error("Failed to load dashboard data:", error);
+  }
 
   const recipeOfTheDay = recipeData?.recipe;
   const categories = categoriesData?.categories || [];
