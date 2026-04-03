@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Check } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
@@ -15,6 +17,8 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 
 export default function PricingSection({ subscriptionTier = "free" }) {
+  const proPlanId = process.env.NEXT_PUBLIC_CLERK_PRO_PLAN_ID;
+
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-16">
@@ -107,27 +111,40 @@ export default function PricingSection({ subscriptionTier = "free" }) {
 
           <CardFooter>
             <SignedIn>
-              <CheckoutButton
-                planId="cplan_37y5uChZ9uYauQyTlDkXDh997ht"
-                planPeriod="month"
-                newSubscriptionRedirectUrl="/dashboard"
-                checkoutProps={{
-                  appearance: {
-                    elements: {
-                      drawerRoot: {
-                        zIndex: 2000,
-                      },
-                    },
-                  },
-                }}
-              >
+              {subscriptionTier === "pro" ? (
                 <Button
-                  disabled={subscriptionTier === "pro"}
+                  disabled
                   className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 disabled:cursor-not-allowed text-white"
                 >
-                  {subscriptionTier === "pro" ? "Subscribed" : "Subscribe Now"}
+                  Subscribed
                 </Button>
-              </CheckoutButton>
+              ) : proPlanId ? (
+                <CheckoutButton
+                  planId={proPlanId}
+                  planPeriod="month"
+                  newSubscriptionRedirectUrl="/dashboard"
+                  checkoutProps={{
+                    appearance: {
+                      elements: {
+                        drawerRoot: {
+                          zIndex: 2000,
+                        },
+                      },
+                    },
+                  }}
+                >
+                  <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">
+                    Subscribe Now
+                  </Button>
+                </CheckoutButton>
+              ) : (
+                <Button
+                  disabled
+                  className="w-full bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 disabled:cursor-not-allowed text-white"
+                >
+                  Pricing Unavailable
+                </Button>
+              )}
             </SignedIn>
             <SignedOut>
               <SignInButton mode="modal">

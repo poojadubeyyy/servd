@@ -1,24 +1,34 @@
+"use client";
+
 import React from "react";
 import { Button } from "./ui/button";
 import { Cookie, Refrigerator, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  useAuth,
+} from "@clerk/nextjs";
 import HowToCookModal from "./HowToCookModal";
 import PricingModal from "./PricingModal";
 import Image from "next/image";
-import { checkUser } from "@/lib/checkUser";
 import { Badge } from "./ui/badge";
 import UserDropdown from "./UserDropdown";
 
-export default async function Header() {
-  const user = await checkUser();
+export default function Header() {
+  const { isLoaded, isSignedIn, has } = useAuth();
+  const proPlan = process.env.NEXT_PUBLIC_CLERK_PRO_PLAN || "pro";
+  const subscriptionTier =
+    isLoaded && isSignedIn && has?.({ plan: proPlan }) ? "pro" : "free";
 
   return (
     <header className="fixed top-0 w-full border-b border-stone-200 bg-stone-50/80 backdrop-blur-md z-50 supports-backdrop-filter:bg-stone-50/60">
       <nav className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link
-          href={user ? "/dashboard" : "/"}
+          href={isLoaded && isSignedIn ? "/dashboard" : "/"}
           className="flex items-center gap-2 group"
         >
           <Image
@@ -54,25 +64,25 @@ export default async function Header() {
 
           <SignedIn>
             {/* Pricing Modal with Built-in Trigger */}
-            {user && (
-              <PricingModal subscriptionTier={user.subscriptionTier}>
+            {isLoaded && (
+              <PricingModal subscriptionTier={subscriptionTier}>
                 <Badge
                   variant="outline"
                   className={`flex h-8 px-3 gap-1.5 rounded-full text-xs font-semibold transition-all ${
-                    user.subscriptionTier === "pro"
+                    subscriptionTier === "pro"
                       ? "bg-linear-to-r from-orange-600 to-amber-500 text-white border-none shadow-sm"
                       : "bg-stone-200/50 text-stone-600 border-stone-200 cursor-pointer hover:bg-stone-300/50 hover:border-stone-300"
                   }`}
                 >
                   <Sparkles
                     className={`h-3 w-3 ${
-                      user.subscriptionTier === "pro"
+                      subscriptionTier === "pro"
                         ? "text-white fill-white/20"
                         : "text-stone-500"
                     }`}
                   />
                   <span>
-                    {user.subscriptionTier === "pro" ? "Pro Chef" : "Free Plan"}
+                    {subscriptionTier === "pro" ? "Pro Chef" : "Free Plan"}
                   </span>
                 </Badge>
               </PricingModal>

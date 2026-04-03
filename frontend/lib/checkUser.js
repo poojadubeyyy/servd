@@ -3,6 +3,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 const STRAPI_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL || "http://localhost:1337";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
+const PRO_PLAN = process.env.NEXT_PUBLIC_CLERK_PRO_PLAN || "pro";
 
 export const checkUser = async () => {
   const user = await currentUser();
@@ -19,7 +20,7 @@ export const checkUser = async () => {
 
   // Check if user has Pro plan
   const { has } = await auth();
-  const subscriptionTier = has({ plan: "pro" }) ? "pro" : "free";
+  const subscriptionTier = has({ plan: PRO_PLAN }) ? "pro" : "free";
 
   try {
     // Check if user exists in Strapi

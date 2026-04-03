@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
                 />
               </div>
               <p className="text-stone-500 text-sm">
-                Made with 💗 by RoadsideCoder
+                Made by Pooja_the_great🐱
               </p>
             </div>
           </footer>

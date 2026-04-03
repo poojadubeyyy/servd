@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChefHat, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,11 @@ export default function HowToCookModal() {
   const router = useRouter();
   const [recipeName, setRecipeName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +43,18 @@ export default function HowToCookModal() {
       setRecipeName(""); // Reset input when closing
     }
   };
+
+  if (!isMounted) {
+    return (
+      <button
+        type="button"
+        className="hover:text-orange-600 transition-colors flex items-center gap-1.5 text-sm font-medium text-stone-600"
+      >
+        <ChefHat className="w-4 h-4" />
+        How to Cook?
+      </button>
+    );
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
